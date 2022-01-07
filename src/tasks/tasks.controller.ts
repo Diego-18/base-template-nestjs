@@ -1,33 +1,49 @@
-import { Controller, Get, Param, Query, Body, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  PartialIntPipe,
+} from '@nestjs/common';
+import { CreateTaskDTO, UpdateTaskDTO } from './dto/task.dto';
 
 @Controller('tasks')
 export class TasksController {
+  @Get()
+  findAll(): string {
+    return 'Hello from done';
+  }
 
-    @Get()                                    
-    sayHello( ): string{
-        return 'Hello World';                       
-    }
+  /**
+   *
+   * @param id  id de la tarea
+   * @returns  retorna una tarea
+   */
+  @Get('/:id')
+  findOne(@Param('id', PartialIntPipe) id: number): string {
+    return 'Su cedula de identidad es ' + id;
+  }
 
-    // Definir una ruta en el controlador mediante GET
-    // @Get('/done')
-    // saludar(name = "Diego", lastName = "Chavez"): string {
-    //     return 'Hello ' + name + ' ' + lastName;
-    // }
+  /**
+   *
+   * @param data    datos de la tarea
+   * @returns    retorna una tarea
+   */
+  @Post()
+  create(@Body() data: CreateTaskDTO) {
+    return data;
+  }
 
-    @Get('/done')
-    done(@Query() params: any): string {        // Recibe los parametros de la url mediante query
-        const { framework } = params;
-        console.log(params);
-        return 'El nombre del framework usado es ' + framework;
-    }
+  @Put()
+  update(@Body() data: UpdateTaskDTO) {
+    return data;
+  }
 
-    @Get('/:id')                                        // Recibe un parametro de tipo string
-    Identificacion( @Param('id') id: string ): string{  // Definir una variable de tipo string con el parametro id
-        return 'Su cedula de identidad es ' + id;                       
-    }
-
-    @Post()
-    create(@Body() data : any ){
-        return data;
-    }
+  @Delete()
+  delete(@Body() data: any) {
+    return data;
+  }
 }
