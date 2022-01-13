@@ -6,15 +6,18 @@ import {
   Delete,
   Param,
   Body,
-  PartialIntPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CreateTaskDTO, UpdateTaskDTO } from './dto/task.dto';
+import { TaskService } from './task.service';
 
 @Controller('tasks')
 export class TasksController {
+  constructor(private taskService: TaskService) {}
+
   @Get()
   findAll(): string {
-    return 'Hello from done';
+    return this.taskService.findAll();
   }
 
   /**
@@ -23,8 +26,8 @@ export class TasksController {
    * @returns  retorna una tarea
    */
   @Get('/:id')
-  findOne(@Param('id', PartialIntPipe) id: number): string {
-    return 'Su cedula de identidad es ' + id;
+  findOne(@Param('id', ParseIntPipe) id: number): string {
+    return this.taskService.findOne(id);
   }
 
   /**
@@ -34,16 +37,16 @@ export class TasksController {
    */
   @Post()
   create(@Body() data: CreateTaskDTO) {
-    return data;
+    return this.taskService.create(data);
   }
 
   @Put()
   update(@Body() data: UpdateTaskDTO) {
-    return data;
+    return this.taskService.update(data);
   }
 
   @Delete()
-  delete(@Body() data: any) {
-    return data;
+  delete(@Param('id', ParseIntPipe) id: number): string {
+    return this.taskService.delete(id);
   }
 }
