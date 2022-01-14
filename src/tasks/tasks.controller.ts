@@ -7,6 +7,8 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { CreateTaskDTO, UpdateTaskDTO } from './dto/task.dto';
 import { TaskService } from './task.service';
@@ -16,8 +18,12 @@ export class TasksController {
   constructor(private taskService: TaskService) {}
 
   @Get()
-  findAll(): string {
-    return this.taskService.findAll();
+  @HttpCode(HttpStatus.OK)
+  findAll() {
+    return {
+      success: true,
+      task: this.taskService.findAll(),
+    };
   }
 
   /**
@@ -26,8 +32,13 @@ export class TasksController {
    * @returns  retorna una tarea
    */
   @Get('/:id')
-  findOne(@Param('id', ParseIntPipe) id: number): string {
-    return this.taskService.findOne(id);
+  @HttpCode(HttpStatus.OK)
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return {
+      success: true,
+      task: this.taskService.findOne(id),
+      message: 'Task updated successfully',
+    };
   }
 
   /**
@@ -36,17 +47,32 @@ export class TasksController {
    * @returns    retorna una tarea
    */
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() data: CreateTaskDTO) {
-    return this.taskService.create(data);
+    return {
+      success: true,
+      task: this.taskService.create(data),
+      message: 'Task created successfully',
+    };
   }
 
-  @Put()
-  update(@Body() data: UpdateTaskDTO) {
-    return this.taskService.update(data);
+  @Put('/:id')
+  @HttpCode(HttpStatus.OK)
+  update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateTaskDTO) {
+    this.taskService.update(id, data);
+    return {
+      success: true,
+      message: 'Task updated successfully',
+    };
   }
 
-  @Delete()
-  delete(@Param('id', ParseIntPipe) id: number): string {
-    return this.taskService.delete(id);
+  @Delete('/:id')
+  @HttpCode(HttpStatus.OK)
+  delete(@Param('id', ParseIntPipe) id: number) {
+    this.taskService.delete(id);
+    return {
+      success: true,
+      message: 'Task removed successfully',
+    };
   }
 }

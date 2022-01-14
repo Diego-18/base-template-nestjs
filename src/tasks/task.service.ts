@@ -12,8 +12,8 @@ export class TaskService {
 
   findOne(id: number) {
     const findTask: TaskEntity = this.tasks.find((task) => task.id === id);
-    if (!findTask){
-      throw new NotFoundException('No se encontro la tarea');
+    if (!findTask) {
+      throw new NotFoundException('task not found');
     }
     return findTask;
   }
@@ -26,8 +26,9 @@ export class TaskService {
 
   update(taskID: number, data: UpdateTaskDTO) {
     const findTask: number = this.tasks.findIndex((task) => task.id === taskID);
-    if (findTask === -1) {
-      throw new NotFoundException('No se encontro la tarea');
+    console.log(findTask);
+    if (findTask === -1){
+      throw new NotFoundException('Task not found');
     }
     this.tasks[findTask] = { ...this.tasks[findTask], ...data };
   }
@@ -37,6 +38,6 @@ export class TaskService {
     if (findTask === -1) {
       throw new NotFoundException('No se encontro la tarea');
     }
-    this.tasks = this.tasks.filter((task) => task.id !== id);
+    return (this.tasks = this.tasks.filter((task) => task.id !== id));
   }
 }
