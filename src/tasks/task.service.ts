@@ -1,25 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDTO, UpdateTaskDTO } from './dto/task.dto';
+import { TaskEntity } from './entity/task.entity';
 
 @Injectable()
 export class TaskService {
-  findAll(): string {
-    return 'Hello from done';
+  private tasks: TaskEntity[] = [];
+
+  findAll(): TaskEntity[] {
+    return this.tasks;
   }
 
   findOne(id: number) {
-    return 'Su cedula de identidad es ' + id;
+    const findTask: TaskEntity = this.tasks.find((task) => task.id === id);
+    if (!findTask){
+      throw new NotFoundException('No se encontro la tarea');
+    }
+    return findTask;
   }
 
-  create(data: CreateTaskDTO) {
-    return data;
+  create(data: CreateTaskDTO): TaskEntity {
+    const newTask: TaskEntity = { id: this.tasks.length + 1, ...data };
+    this.tasks.unshift(newTask);
+    return newTask;
   }
 
-  update(data: UpdateTaskDTO) {
-    return data;
+  update(taskID: number, data: UpdateTaskDTO) {
+    const findTask: number = this.tasks.findIndex((task) => task.id === taskID);
+    if (findTask === -1) {
+      throw new NotFoundException('No se encontro la tarea');
+    }
+    this.tasks[findTask] = { ...this.tasks[findTask], ...data };
   }
 
   delete(id: number) {
-    return 'Registro numero:' + id + ' eliminado';
+    const findTask: number = this.tasks.findIndex((task) => task.id === id);
+    if (findTask === -1) {
+      throw new NotFoundException('No se encontro la tarea');
+    }
+    this.tasks = this.tasks.filter((task) => task.id !== id);
   }
 }
